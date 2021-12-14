@@ -20,16 +20,16 @@ class Segment1D:
         return segments
 
 
-class Segment2D:
+class SegmentND:
     """
-    Segment 2D signal
+    Segment multi-channels signal
     """
 
     @classmethod
     def apply(cls, x, window_size=200, step_size=50):
         """
         @param x: 2D signal
-        @param window_size: window size.Default: 200.
+        @param window_size: window size. Default: 200.
         @param step_size: step size. Default: 50
         """
         length = int(len(x) % window_size)
