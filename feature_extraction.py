@@ -9,18 +9,18 @@ class MaxPeak:
         @param segment: signal segment
         @param window_size: window size. Default: 50
         """
-        assert 0 <= window_size <= segment.shape[1], 'window_size={} is invalid!'.format(window_size)
-        length = segment.shape[1]
+        assert 0 <= window_size <= segment.shape[0], 'window_size={} is invalid!'.format(window_size)
+        L = segment.shape[0]
         peaks = np.array([])
-        for i in range(0, length, window_size):
+        for i in range(0, L, window_size):
             start = i
-            end = i + window_size if (i + window_size <= length) else 2 * i + window_size - length
-            peak = np.max(segment[:, start: end], axis=1)
-            peak = np.expand_dims(peak, axis=1)
+            end = i + window_size if (i + window_size <= L) else 2 * i + window_size - L
+            peak = np.max(segment[start: end, :], axis=0)
+            peak = np.expand_dims(peak, axis=0)
             if i == 0:
                 peaks = peak
                 continue
-            peaks = np.hstack((peaks, peak))
+            peaks = np.vstack((peaks, peak))
         return peaks
 
 
@@ -31,18 +31,18 @@ class Mean:
         @param segment: signal segment
         @param window_size: window size. Default: 50
         """
-        assert 0 <= window_size <= segment.shape[1], 'window_size={} is invalid!'.format(window_size)
-        length = segment.shape[1]
+        assert 0 <= window_size <= segment.shape[0], 'window_size={} is invalid!'.format(window_size)
+        L = segment.shape[0]
         means = np.array([])
-        for i in range(0, length, window_size):
+        for i in range(0, L, window_size):
             start = i
-            end = i + window_size if (i + window_size <= length) else 2 * i + window_size - length
-            mean = np.mean(segment[:, start: end], axis=1)
-            mean = np.expand_dims(mean, axis=1)
+            end = i + window_size if (i + window_size <= L) else 2 * i + window_size - L
+            mean = np.mean(segment[start: end, :], axis=0)
+            mean = np.expand_dims(mean, axis=0)
             if i == 0:
                 means = mean
                 continue
-            means = np.hstack((means, mean))
+            means = np.vstack((means, mean))
         return means
 
 
@@ -53,18 +53,18 @@ class Variance:
         @param segment: signal segment
         @param window_size: window size. Default: 50.
         """
-        assert 0 <= window_size <= segment.shape[1], 'window_size={} is invalid!'.format(window_size)
-        length = segment.shape[1]
+        assert 0 <= window_size <= segment.shape[0], 'window_size={} is invalid!'.format(window_size)
+        L = segment.shape[0]
         vars = np.array([])
-        for i in range(0, length, window_size):
+        for i in range(0, L, window_size):
             start = i
-            end = i + window_size if (i + window_size <= length) else 2 * i + window_size - length
-            var = np.var(segment[:, start: end], axis=1)
-            var = np.expand_dims(var, axis=1)
+            end = i + window_size if (i + window_size <= L) else 2 * i + window_size - L
+            var = np.var(segment[start: end, :], axis=0)
+            var = np.expand_dims(var, axis=0)
             if i == 0:
                 vars = var
                 continue
-            vars = np.hstack((vars, var))
+            vars = np.vstack((vars, var))
         return vars
 
 
@@ -75,18 +75,18 @@ class StandardDeviation:
         @param segment: signal segment
         @param window_size: window size. Default: 50.
         """
-        assert 0 <= window_size <= segment.shape[1], 'window_size={} is invalid!'.format(window_size)
-        length = segment.shape[1]
+        assert 0 <= window_size <= segment.shape[0], 'window_size={} is invalid!'.format(window_size)
+        L = segment.shape[0]
         stds = np.array([])
-        for i in range(0, length, window_size):
+        for i in range(0, L, window_size):
             start = i
-            end = i + window_size if (i + window_size <= length) else 2 * i + window_size - length
-            std = np.std(segment[:, start: end], axis=1)
-            std = np.expand_dims(std, axis=1)
+            end = i + window_size if (i + window_size <= L) else 2 * i + window_size - L
+            std = np.std(segment[start: end, :], axis=0)
+            std = np.expand_dims(std, axis=0)
             if i == 0:
                 stds = std
                 continue
-            stds = np.hstack((stds, std))
+            stds = np.vstack((stds, std))
         return stds
 
 
@@ -97,18 +97,18 @@ class Skewness:
         @param segment: signal segment
         @param window_size: window size. Default: 50.
         """
-        assert 0 <= window_size <= segment.shape[1], 'window_size={} is invalid!'.format(window_size)
-        length = segment.shape[1]
+        assert 0 <= window_size <= segment.shape[0], 'window_size={} is invalid!'.format(window_size)
+        L = segment.shape[0]
         skews = np.array([])
-        for i in range(0, length, window_size):
+        for i in range(0, L, window_size):
             start = i
-            end = i + window_size if (i + window_size <= length) else 2 * i + window_size - length
-            skew = stats.skew(segment[:, start: end], axis=1)
-            skew = np.expand_dims(skew, axis=1)
+            end = i + window_size if (i + window_size <= L) else 2 * i + window_size - L
+            skew = stats.skew(segment[start: end, :], axis=0)
+            skew = np.expand_dims(skew, axis=0)
             if i == 0:
                 skews = skew
                 continue
-            skews = np.hstack((skews, skew))
+            skews = np.vstack((skews, skew))
         return skews
 
 
@@ -119,18 +119,18 @@ class Kurtosis:
         @param segment: signal segment
         @param window_size: window size. Default: 50.
         """
-        assert 0 <= window_size <= segment.shape[1], 'window_size={} is invalid!'.format(window_size)
-        length = segment.shape[1]
+        assert 0 <= window_size <= segment.shape[0], 'window_size={} is invalid!'.format(window_size)
+        L = segment.shape[0]
         kurts = np.array([])
-        for i in range(0, length, window_size):
+        for i in range(0, L, window_size):
             start = i
-            end = i + window_size if (i + window_size <= length) else 2 * i + window_size - length
-            kurt = stats.kurtosis(segment[:, start: end], axis=1)
-            kurt = np.expand_dims(kurt, axis=1)
+            end = i + window_size if (i + window_size <= L) else 2 * i + window_size - L
+            kurt = stats.kurtosis(segment[start: end, :], axis=0)
+            kurt = np.expand_dims(kurt, axis=0)
             if i == 0:
                 kurts = kurt
                 continue
-            kurts = np.hstack((kurts, kurt))
+            kurts = np.vstack((kurts, kurt))
         return kurts
 
 
@@ -141,18 +141,18 @@ class RootMeanSquare:
         @param segment: signal segment
         @param window_size: window size. Default: 50.
         """
-        assert 0 <= window_size <= segment.shape[1], 'window_size={} is invalid!'.format(window_size)
-        length = segment.shape[1]
+        assert 0 <= window_size <= segment.shape[0], 'window_size={} is invalid!'.format(window_size)
+        L = segment.shape[0]
         rmss = np.array([])
-        for i in range(0, length, window_size):
+        for i in range(0, L, window_size):
             start = i
-            end = i + window_size if (i + window_size <= length) else 2 * i + window_size - length
-            rms = np.sqrt(np.mean(segment[:, start: end] ** 2, axis=1))
-            rms = np.expand_dims(rms, axis=1)
+            end = i + window_size if (i + window_size <= L) else 2 * i + window_size - L
+            rms = np.sqrt(np.mean(segment[start: end, :] ** 2, axis=0))
+            rms = np.expand_dims(rms, axis=0)
             if i == 0:
                 rmss = rms
                 continue
-            rmss = np.hstack((rmss, rms))
+            rmss = np.vstack((rmss, rms))
         return rmss
 
 
@@ -163,18 +163,18 @@ class WaveformLength:
         @param segment: signal segment
         @param window_size: window size. Default: 50.
         """
-        assert 0 <= window_size <= segment.shape[1], 'window_size={} is invalid!'.format(window_size)
-        length = segment.shape[1]
+        assert 0 <= window_size <= segment.shape[0], 'window_size={} is invalid!'.format(window_size)
+        L = segment.shape[0]
         wls = np.array([])
-        for i in range(0, length, window_size):
+        for i in range(0, L, window_size):
             start = i
-            end = i + window_size if (i + window_size <= length) else 2 * i + window_size - length
-            wl = np.sum(np.abs(np.diff(segment[:, start: end], axis=1)), axis=1)
-            wl = np.expand_dims(wl, axis=1)
+            end = i + window_size if (i + window_size <= L) else 2 * i + window_size - L
+            wl = np.sum(np.abs(np.diff(segment[start: end, :], axis=0)), axis=0)
+            wl = np.expand_dims(wl, axis=0)
             if i == 0:
                 wls = wl
                 continue
-            wls = np.hstack((wls, wl))
+            wls = np.vstack((wls, wl))
         return wls
 
 
@@ -186,26 +186,26 @@ class WillisonAmplitude:
         @param window_size: window size. Default: 50.
         @param eps: threshold value. Default: 0.5.
         """
-        assert 0 <= window_size <= segment.shape[1], 'window_size={} is invalid!'.format(window_size)
+        assert 0 <= window_size <= segment.shape[0], 'window_size={} is invalid!'.format(window_size)
         if eps > 1:
             eps = 1
         elif eps < 0:
             eps = 0
-        length = segment.shape[1]
+        L = segment.shape[0]
         wamps = np.array([])
-        for i in range(0, length, window_size):
+        for i in range(0, L, window_size):
             start = i
-            end = i + window_size if (i + window_size <= length) else 2 * i + window_size - length
-            wl = np.abs(np.diff(segment[:, start: end], axis=1))
+            end = i + window_size if (i + window_size <= L) else 2 * i + window_size - L
+            wl = np.abs(np.diff(segment[start: end, :], axis=0))
             mask = wl[wl > eps]
             wl[mask is True] = 1
             wl[mask is False] = 0
-            wamp = np.sum(wl, axis=1)
-            wamp = np.expand_dims(wamp, axis=1)
+            wamp = np.sum(wl, axis=0)
+            wamp = np.expand_dims(wamp, axis=0)
             if i == 0:
                 wamps = wamp
                 continue
-            wamps = np.hstack((wamps, wamp))
+            wamps = np.vstack((wamps, wamp))
         return wamps
 
 
@@ -222,13 +222,13 @@ class PSD:
         @param fs: sampling rate. Default: 512.
         @param average: 'mean' or 'median'. Default: 'mean'
         """
-        assert 0 <= window_size <= segment.shape[1], 'window_size={} is invalid!'.format(window_size)
-        length = segment.shape[1]
+        assert 0 <= window_size <= segment.shape[0], 'window_size={} is invalid!'.format(window_size)
+        L = segment.shape[0]
         psds = np.array([])
-        for i in range(0, length, window_size):
+        for i in range(0, L, window_size):
             start = i
-            end = i + window_size if (i + window_size <= length) else 2 * i + window_size - length
-            freq, power = signal.welch(segment[:, start: end],
+            end = i + window_size if (i + window_size <= L) else 2 * i + window_size - L
+            freq, power = signal.welch(segment[start: end, :],
                                        fs=fs,
                                        scaling='density',
                                        detrend=False,
@@ -236,11 +236,11 @@ class PSD:
                                        average=average,
                                        nperseg=window_size,
                                        return_onesided=True,
-                                       axis=1)
+                                       axis=0)
             if i == 0:
                 psds = power
                 continue
-            psds = np.hstack((psds, power))
+            psds = np.vstack((psds, power))
         return psds
 
 
@@ -250,29 +250,30 @@ class STFT:
     """
 
     @classmethod
-    def apply(cls, segment, window_size=50, fs=512):
+    def apply(cls, segment, w, H=8):
         """
-                @param segment: signal segment.
-                @param window_size: window size. Default: 50.
-                @param fs: sampling rate. Default: 512.
-                """
-        assert 0 <= window_size <= segment.shape[1], 'window_size={} is invalid!'.format(window_size)
-        length = segment.shape[1]
+        @param segment: signal segment.
+        @param w: window function.
+        @param H: Hopsize. Default: 8.
+        """
+        N = len(w)
+        num_channels = segment.shape[1]
+        L = segment.shape[0]
+        M = np.floor((L - N) / H).astype(int) + 1
         stfts = np.array([])
-        for i in range(0, length, window_size):
-            start = i
-            end = i + window_size if (i + window_size <= length) else 2 * i + window_size - length
-            freq, t, stft = signal.stft(segment[:, start: end],
-                                        fs=fs,
-                                        detrend=False,
-                                        nfft=window_size,
-                                        nperseg=window_size,
-                                        return_onesided=True,
-                                        axis=1)
+        for i in range(num_channels):
+            stft = np.zeros((N, M), dtype='complex')
+            for m in range(M):
+                stft_win = segment[:, i][m * H:m * H + N] * w
+                stft_win = np.fft.fft(stft_win)
+                stft[:, m] = stft_win
+            K = 1 + N // 2
+            stft = stft[0: K, :]
             if i == 0:
                 stfts = stft
                 continue
             stfts = np.dstack((stfts, stft))
+        # stfts = np.transpose(stfts, (2, 0, 1))
         return stfts
 
 
@@ -288,23 +289,22 @@ class CWT:
                 @param window_size: window size. Default: 50.
                 @param widths: number of scale. Default: 50.
                 """
-        assert 0 <= window_size <= segment.shape[1], 'window_size={} is invalid!'.format(window_size)
-        length = segment.shape[1]
-        num_channels = segment.shape[0]
+        assert 0 <= window_size <= segment.shape[0], 'window_size={} is invalid!'.format(window_size)
+        L = segment.shape[0]
+        num_channels = segment.shape[1]
         if isinstance(widths, int):
             widths = np.arange(1, widths + 1)
         cwts = np.array([])
-        for i in range(0, length, window_size):
+        for i in range(0, L, window_size):
             start = i
-            end = i + window_size if (i + window_size <= length) else 2 * i + window_size - length
+            end = i + window_size if (i + window_size <= L) else 2 * i + window_size - L
             cwt = np.array([])
             for j in range(num_channels):
-                cwt_ = signal.cwt(segment[j, start: end], signal.ricker, widths, dtype=np.float64)
+                cwt_ = signal.cwt(segment[start: end, j], signal.ricker, widths, dtype=np.float64)
                 if j == 0:
                     cwt = cwt_
                     continue
                 cwt = np.dstack((cwt, cwt_))
-            cwt = np.transpose(cwt, (2, 0, 1))
             if i == 0:
                 cwts = cwt
             cwts = np.dstack((cwts, cwt))

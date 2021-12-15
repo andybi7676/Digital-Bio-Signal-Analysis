@@ -34,7 +34,7 @@ class SegmentND:
         """
         length = int(len(x) % window_size)
         # make sure there are an even number of windows before stride tricks
-        pad = np.zeros((x.shape[0], length))
-        x_padded = np.hstack([x, pad])
-        segments = [x_padded[:, i:i + window_size] for i in range(0, x_padded.shape[1], step_size)]
+        pad = np.zeros((length, x.shape[1]))
+        x_padded = np.vstack([x, pad])
+        segments = [x_padded[i:i + window_size, :] for i in range(0, x_padded.shape[0], step_size)]
         return segments
