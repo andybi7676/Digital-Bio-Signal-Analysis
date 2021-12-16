@@ -13,10 +13,10 @@ class Segment1D:
         @param window_size: window size.Default: 200.
         @param step_size: step size. Default: 50
         """
-        length = int(len(x) % window_size)
-        pad = np.array([0] * length)
-        x_padded = np.concatenate([x, pad])
-        segments = [x_padded[i:i + window_size] for i in range(0, len(x_padded), step_size)]
+        # length = window_size - int(len(x) % window_size)
+        # pad = np.array([0] * length)
+        # x_padded = np.concatenate([x, pad])
+        segments = [x[i:i + window_size] for i in range(0, x.shape[0], step_size) if (i + window_size < x.shape[0])]
         return segments
 
 
@@ -32,9 +32,9 @@ class SegmentND:
         @param window_size: window size. Default: 200.
         @param step_size: step size. Default: 50
         """
-        length = int(len(x) % window_size)
+        # length = (x.shape[1] - step_size + window_size) % window_size
         # make sure there are an even number of windows before stride tricks
-        pad = np.zeros((length, x.shape[1]))
-        x_padded = np.vstack([x, pad])
-        segments = [x_padded[i:i + window_size, :] for i in range(0, x_padded.shape[0], step_size)]
+        # pad = np.zeros((length, x.shape[1]))
+        # x_padded = np.vstack([x, pad])
+        segments = [x[i:i + window_size, :] for i in range(0, x.shape[0], step_size) if (i + window_size < x.shape[0])]
         return segments

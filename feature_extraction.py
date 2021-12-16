@@ -14,7 +14,7 @@ class MaxPeak:
         peaks = np.array([])
         for i in range(0, L, window_size):
             start = i
-            end = i + window_size if (i + window_size <= L) else 2 * i + window_size - L
+            end = i + window_size if (i + window_size < L) else L
             peak = np.max(segment[start: end, :], axis=0)
             peak = np.expand_dims(peak, axis=0)
             if i == 0:
@@ -36,7 +36,7 @@ class Mean:
         means = np.array([])
         for i in range(0, L, window_size):
             start = i
-            end = i + window_size if (i + window_size <= L) else 2 * i + window_size - L
+            end = i + window_size if (i + window_size < L) else L
             mean = np.mean(segment[start: end, :], axis=0)
             mean = np.expand_dims(mean, axis=0)
             if i == 0:
@@ -58,7 +58,7 @@ class Variance:
         vars = np.array([])
         for i in range(0, L, window_size):
             start = i
-            end = i + window_size if (i + window_size <= L) else 2 * i + window_size - L
+            end = i + window_size if (i + window_size < L) else L
             var = np.var(segment[start: end, :], axis=0)
             var = np.expand_dims(var, axis=0)
             if i == 0:
@@ -80,7 +80,7 @@ class StandardDeviation:
         stds = np.array([])
         for i in range(0, L, window_size):
             start = i
-            end = i + window_size if (i + window_size <= L) else 2 * i + window_size - L
+            end = i + window_size if (i + window_size < L) else L
             std = np.std(segment[start: end, :], axis=0)
             std = np.expand_dims(std, axis=0)
             if i == 0:
@@ -102,7 +102,7 @@ class Skewness:
         skews = np.array([])
         for i in range(0, L, window_size):
             start = i
-            end = i + window_size if (i + window_size <= L) else 2 * i + window_size - L
+            end = i + window_size if (i + window_size < L) else L
             skew = stats.skew(segment[start: end, :], axis=0)
             skew = np.expand_dims(skew, axis=0)
             if i == 0:
@@ -124,7 +124,7 @@ class Kurtosis:
         kurts = np.array([])
         for i in range(0, L, window_size):
             start = i
-            end = i + window_size if (i + window_size <= L) else 2 * i + window_size - L
+            end = i + window_size if (i + window_size < L) else L
             kurt = stats.kurtosis(segment[start: end, :], axis=0)
             kurt = np.expand_dims(kurt, axis=0)
             if i == 0:
@@ -146,7 +146,7 @@ class RootMeanSquare:
         rmss = np.array([])
         for i in range(0, L, window_size):
             start = i
-            end = i + window_size if (i + window_size <= L) else 2 * i + window_size - L
+            end = i + window_size if (i + window_size < L) else L
             rms = np.sqrt(np.mean(segment[start: end, :] ** 2, axis=0))
             rms = np.expand_dims(rms, axis=0)
             if i == 0:
@@ -168,7 +168,7 @@ class WaveformLength:
         wls = np.array([])
         for i in range(0, L, window_size):
             start = i
-            end = i + window_size if (i + window_size <= L) else 2 * i + window_size - L
+            end = i + window_size if (i + window_size < L) else L
             wl = np.sum(np.abs(np.diff(segment[start: end, :], axis=0)), axis=0)
             wl = np.expand_dims(wl, axis=0)
             if i == 0:
@@ -195,7 +195,7 @@ class WillisonAmplitude:
         wamps = np.array([])
         for i in range(0, L, window_size):
             start = i
-            end = i + window_size if (i + window_size <= L) else 2 * i + window_size - L
+            end = i + window_size if (i + window_size < L) else L
             wl = np.abs(np.diff(segment[start: end, :], axis=0))
             mask = wl[wl > eps]
             wl[mask is True] = 1
@@ -227,7 +227,7 @@ class PSD:
         psds = np.array([])
         for i in range(0, L, window_size):
             start = i
-            end = i + window_size if (i + window_size <= L) else 2 * i + window_size - L
+            end = i + window_size if (i + window_size < L) else L
             freq, power = signal.welch(segment[start: end, :],
                                        fs=fs,
                                        scaling='density',
