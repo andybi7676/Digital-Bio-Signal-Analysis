@@ -66,7 +66,7 @@ def process_signalnd(x, raw_fs=1000, low_fs=1, high_fs=120, notch_fs=60, Q=20, w
 
 # The class to connect the electrodes through serial
 class SerialPort:
-    def __init__(self, port='COM1', baud=9600, cls=None, pca=None, controller=None, num_channels=4, interval=1000, timeout=0.1):
+    def __init__(self, port='COM1', baud=115200, cls=None, pca=None, controller=None, num_channels=4, interval=1000, timeout=0.1):
         super(SerialPort, self).__init__()
         self.port = serial.Serial(port, baud)
         self.signal = None
@@ -200,12 +200,12 @@ if '__name__' == '__main__':
     # Set command line arguments
     parser = argparse.ArgumentParser(description='Real-time robot-arm controlling')
     parser.add_argument('--arduport', type=str, default='COM1', help='COM port for arduino')
-    parser.add_argument('--ardubaud', type=int, default=112500, help='Baud rate for arduino')
+    parser.add_argument('--ardubaud', type=int, default=115200, help='Baud rate for arduino')
     parser.add_argument('--axport', type=str, default='COM3', help='COM port for dynamix 12')
     parser.add_argument('--axbaud', type=int, default=9600, help='Baud rate for dynamix 12')
     parser.add_argument('--num-motors', type=int, default=4, help='Number of motors')
     parser.add_argument('--channels', type=int, default=4, help='The number of channels')
-    parser.add_argument('--segment', type=int, default=2000, help='Segmentation interval')
+    parser.add_argument('--segment', type=int, default=1000, help='Segmentation interval')
     parser.add_argument('--timeout', type=float, default=1, help='Time out')
     args = parser.parse_args()
     # define reboot
