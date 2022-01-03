@@ -138,7 +138,7 @@ class SerialPort:
                 feature = np.expand_dims(feature, axis=0)
             if self.pca:
                 feature = self.pca.transform(feature)
-            y_preds = self.cls(feature)
+            y_preds = self.cls.predict(feature)
             self.action = str(y_preds)
 
 
