@@ -249,7 +249,8 @@ def main():
                 else:
                     raise
 
-
+if __name__ == "__main__":
+    main()
     
 
 
