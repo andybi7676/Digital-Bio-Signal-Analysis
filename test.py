@@ -17,6 +17,7 @@ from model import ResNetClassifier
 import torch.nn as nn
 import torch
 from torch.utils.tensorboard import SummaryWriter 
+from visualize import plot_confusion_matrix, display_model_performance
 
 # process signal of each channel
 def process_signal1d(x, raw_fs=1000, low_fs=1, high_fs=120, notch_fs=60, Q=20, window_size=250, step_size=50, target_fs=512):
@@ -133,6 +134,7 @@ def test(dataloader, model, criterion, device):
     pbar = tqdm(total=len(dataloader.dataset), ncols=0, desc="Test", unit=" uttr")
 
     accuracy = 0
+    y_preds = []
     for i, batch in enumerate(dataloader):
         with torch.no_grad():
             loss, outs, labels = model_fn(batch, model, criterion, device)
@@ -143,6 +145,7 @@ def test(dataloader, model, criterion, device):
             for pred, label in zip(preds, labels):
                 if pred == label:
                     accuracy += 1
+                y_preds.append(pred)
 
         pbar.update(dataloader.batch_size)
         pbar.set_postfix(
@@ -154,7 +157,7 @@ def test(dataloader, model, criterion, device):
     accuracy /= len(dataloader)
     print(f"[Info]: We got accuracy {accuracy} in {len(dataloader)} sequences!",flush = True) 
 
-    return running_loss / len(dataloader)
+    return running_loss / len(dataloader), y_preds
 
 def main():
     out_dir = './DL'
@@ -187,7 +190,9 @@ def main():
     criterion = nn.CrossEntropyLoss().to(device)
 
     try:
-        testing_loss = test(test_loader, model, criterion, device)
+        testing_loss, y_preds = test(test_loader, model, criterion, device)
+        display_model_performance(label_all['test'], y_preds, classes=[0, 1, 2])
+        plot_confusion_matrix(label_all['test'], y_preds, labels=[0, 1, 2], save_name='TEST_DL_CONFUSION_MATRIX')
         print(f"testing loss: {testing_loss}")
     except RuntimeError as e:
         if 'CUDA out of memory' in str(e):
