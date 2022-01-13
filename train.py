@@ -201,7 +201,7 @@ def main():
     global_step = 0
     pbar = tqdm(total=total_steps, dynamic_ncols=True, desc="Training overall...", unit=" step")
     while pbar.n < pbar.total:
-        for batch_id, batch in enumerate(tqdm(train_loader), dynamic_ncols=True, total=len(train_loader), desc=f'training'):
+        for batch_id, batch in enumerate(tqdm(train_loader, dynamic_ncols=True, total=len(train_loader), desc=f'training')):
             try:
                 if pbar.n >= pbar.total: break
                 global_step = pbar + 1
