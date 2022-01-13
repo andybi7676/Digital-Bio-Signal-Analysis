@@ -11,7 +11,7 @@ from processing import MeanShift1D, Detrend1D, Resample1D, Normalize1D
 from segment import SegmentND
 from feature_extraction import *
 from tqdm import tqdm
-from torch.optim import AdamW, SGD
+from torch.optim import AdamW
 from torch.utils.data import Dataset, DataLoader
 from model import ResNetClassifier
 import torch.nn as nn
@@ -125,12 +125,12 @@ def model_fn(batch, model, criterion, device):
 
     return loss, outs, labels
 
-def valid(dataloader, model, criterion, device): 
-    """Validate on validation set."""
+def test(dataloader, model, criterion, device): 
+    """Test on test set."""
 
     model.eval()
     running_loss = 0.0
-    pbar = tqdm(total=len(dataloader.dataset), ncols=0, desc="Valid", unit=" uttr")
+    pbar = tqdm(total=len(dataloader.dataset), ncols=0, desc="Test", unit=" uttr")
 
     accuracy = 0
     for i, batch in enumerate(dataloader):
@@ -138,6 +138,8 @@ def valid(dataloader, model, criterion, device):
             loss, outs, labels = model_fn(batch, model, criterion, device)
             running_loss += loss.item()
             preds = outs.argmax(dim=-1).cpu().numpy()
+            # print(preds.shape)
+            # assert 1==2
             for pred, label in zip(preds, labels):
                 if pred == label:
                     accuracy += 1
@@ -150,7 +152,7 @@ def valid(dataloader, model, criterion, device):
     pbar.close()
     model.train()
     accuracy /= len(dataloader)
-    tqdm.write(f"[Info]: We got accuracy {accuracy} in {len(dataloader)} sequences!") 
+    print(f"[Info]: We got accuracy {accuracy} in {len(dataloader)} sequences!",flush = True) 
 
     return running_loss / len(dataloader)
 
@@ -160,15 +162,10 @@ def main():
         os.makedirs(out_dir)
 
     data_all, label_all = get_data()
-    train_set = EmgDataset(data_all['train'], label_all['train'], augment=True)
-    valid_set = EmgDataset(data_all['val'], label_all['val'])
+    test_set = EmgDataset(data_all['test'], label_all['test'])
 
-    train_loader = DataLoader(train_set, batch_size=128, shuffle=True, drop_last=True)
-    valid_loader = DataLoader(valid_set, batch_size=1, shuffle=False)
+    test_loader = DataLoader(test_set, batch_size=1, shuffle=False)
 
-    val_steps = len(train_loader)
-    epochs = 25
-    total_steps = val_steps * epochs
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = ResNetClassifier(
         label_num=3,
@@ -185,67 +182,24 @@ def main():
         nin_layers=0,
         stacks=[3, 3, 3],
     ).to(device)
-
+    load_ckpt_file = os.path.join(out_dir, 'resnet_best.ckpt')
+    model.load_state_dict(torch.load(load_ckpt_file, map_location=device))
     criterion = nn.CrossEntropyLoss().to(device)
-    optimizer = AdamW(model.parameters(), lr=1e-2)
-    scheduler = torch.optim.lr_scheduler.StepLR(
-       optimizer, step_size = val_steps * 5, gamma = 0.5)
-    writer = SummaryWriter(out_dir)
 
-    best_loss = 10000000
-    best_state_dict = None
-
-    global_step = 0
-    pbar = tqdm(total=total_steps, dynamic_ncols=True, desc="Training overall...", unit=" step")
-    while pbar.n < pbar.total:
-        for batch_id, batch in enumerate(tqdm(train_loader, dynamic_ncols=True, total=len(train_loader), desc=f'training')):
-            try:
-                # print(batch[0].shape)
-                # batch_size = batch[0].shape[0]
-                if pbar.n >= pbar.total: break
-                global_step = pbar.n + 1
-                loss, _, _ = model_fn(batch, model, criterion, device)
-                batch_loss = loss.item()
-                writer.add_scalar('training_loss', loss, global_step)
-                loss.backward()
-                optimizer.step()
-                scheduler.step()
-                optimizer.zero_grad()
-
-                pbar.update()
-                pbar.set_postfix(
-                    loss=f"{batch_loss:.2f}",
-                    step=global_step,
-                )
-                if (global_step + 1) % val_steps == 0:
-
-                    valid_loss = valid(valid_loader, model, criterion, device)
-                    writer.add_scalar('valid_loss', valid_loss, global_step)
-
-                    # keep the best model
-                    if valid_loss < best_loss:
-                        best_loss = valid_loss
-                        best_state_dict = model.state_dict()
-                        save_path = os.path.join(out_dir, "resnet_best.ckpt")
-                        torch.save(best_state_dict, save_path)
-                        pbar.write(f"Step {global_step}, best model saved. (loss={best_loss:.4f})")
-
-                    tqdm.write(f"\n[Info]: Current lr:{optimizer.param_groups[0]['lr']}")
-
-                # Save the best model so far.
-
-            except RuntimeError as e:
-                if 'CUDA out of memory' in str(e):
-                    print(f'[Runner] - CUDA out of memory at step {global_step}')
-                    # if self.first_round:
-                        # raise
-                    with torch.cuda.device(device):
-                        torch.cuda.empty_cache()
-                    optimizer.zero_grad()
-                    raise
-                    # continue
-                else:
-                    raise
+    try:
+        testing_loss = test(test_loader, model, criterion, device)
+        print(f"testing loss: {testing_loss}")
+    except RuntimeError as e:
+        if 'CUDA out of memory' in str(e):
+            print(f'[Runner] - CUDA out of memory')
+            # if self.first_round:
+                # raise
+            with torch.cuda.device(device):
+                torch.cuda.empty_cache()
+            raise
+            # continue
+        else:
+            raise
 
 if __name__ == "__main__":
     main()
