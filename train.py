@@ -106,8 +106,6 @@ def get_data():
                 emg_processed = process_signalnd(emg_raw, raw_fs, low_fs, high_fs, notch_fs, Q, windows, steps, target_fs) # each emg_processed length: (5120, 4)
                 # segment signal
                 signal_segments = SegmentND.apply(emg_processed, seg_window_size, seg_step_size) # each segment's shape: (512, 4)
-                print(f"{filename}: signal shape -> {emg_processed.shape}; signal_segments: {len(signal_segments)}")
-                print(f"{signal_segments[0].shape}")
                 data[sub.name].extend(signal_segments)
                 label[sub.name].extend([y] * len(signal_segments))
     print('Number of train samples (X, Y) = ({}, {})'.format(len(data['train']), len(label['train'])))
