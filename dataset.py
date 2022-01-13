@@ -37,5 +37,6 @@ class EmgDataset(Dataset):
         #             rand_num = random.randint(0, data_array.shape[0] - 1)
         #             rand_row = data_array[rand_num]
         #             data_array = np.insert(data_array, rand_num, rand_row, 0)
+        data_array.astype(np.float32)
         data_array = torch.from_numpy(data_array)
         return torch.FloatTensor(data_array), torch.tensor(label)
